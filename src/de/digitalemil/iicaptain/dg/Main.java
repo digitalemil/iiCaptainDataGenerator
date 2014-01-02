@@ -93,7 +93,7 @@ public class Main implements Runnable {
 			url = baseurl + "/world/location?longitude="
 					+ airport.getLongitude() + "&latitude="
 					+ airport.getLatitude() + "&altitude="
-					+ airport.getAltitude() + "&iata=" + airport.getIata();
+					+ airport.getAltitude() + "&iata=" + airport.getIata()+"&timestamp="+(System.currentTimeMillis()-978307200000L);
 			
 			url2 = baseurl + "/world/create?width=256&height=256&type=java";
 			thread = new Thread(new Main(url, url2));
