@@ -23,7 +23,7 @@ public class XMLParser {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		XMLStreamReader parser = factory
 				.createXMLStreamReader(new FileInputStream(fname));
-
+		
 		StringBuilder spacer = new StringBuilder();
 
 		while (parser.hasNext()) {
@@ -98,8 +98,7 @@ public class XMLParser {
 				}
 				if(e.equals("units")) {
 					inUnits= false;
-				}
-				
+				}				
 				break;
 
 			default:

@@ -1,0 +1,58 @@
+<workflow-app name="AppAnnieImport" xmlns="uri:oozie:workflow:0.4">
+    <start to="ImportStoreData"/>
+    <action name="ImportStoreData">
+        <shell xmlns="uri:oozie:shell-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <exec>/user/hue/import.sh</exec>
+            <file>import.sh#import.sh</file>
+        </shell>
+        <ok to="CopyCSVToHDFS"/>
+        <error to="kill"/>
+    </action>
+    <action name="CopyCSVToHDFS">
+        <shell xmlns="uri:oozie:shell-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                  <delete path="${nameNode}/user/hive/appannie/tmp"/>
+            </prepare>
+            <exec>hadoop</exec>
+              <argument>fs</argument>
+              <argument>-copyFromLocal</argument>
+              <argument>/opt/appannie/tmp</argument>
+              <argument>/user/hive/appannie/tmp</argument>
+        </shell>
+        <ok to="RefineData"/>
+        <error to="kill"/>
+    </action>
+    <action name="RefineData">
+        <pig>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                  <delete path="${nameNode}/user/hive/appannie/data/tmp"/>
+            </prepare>
+            <script>refine.pig</script>
+            <file>/user/hue/oozie/workspaces/_hue_-oozie-32-1388653532.9#_hue_-oozie-32-1388653532.9</file>
+        </pig>
+        <ok to="LoadDataIntoHive"/>
+        <error to="kill"/>
+    </action>
+    <action name="LoadDataIntoHive">
+        <shell xmlns="uri:oozie:shell-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <exec>loaddata.sh</exec>
+            <file>loaddata.sh#loaddata.sh</file>
+            <file>loaddata.hql#loaddata.hql</file>
+        </shell>
+        <ok to="end"/>
+        <error to="kill"/>
+    </action>
+    <kill name="kill">
+        <message>Action failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end"/>
+</workflow-app>
+

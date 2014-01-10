@@ -3,6 +3,8 @@ APPANNIE_HOME=/opt/appannie
 
 YESTERDAY=`date "+20%y-%m-%d" -d "yesterday"`
 
+rm -f tmp/*
+
 curl --header "Accept: application/xml" --header "Authorization: Bearer 3a5cfea52747a72e66c27f82d7f2ab65a2ecc7e1" "https://api.appannie.com/v1/accounts/108900/sales?start_date=$YESTERDAY&end_date=$YESTERDAY&&break_down=country&&break_down=country" >$APPANNIE_HOME/tmp/import-googleplay.xml
 curl --header "Accept: application/xml" --header "Authorization: Bearer 3a5cfea52747a72e66c27f82d7f2ab65a2ecc7e1" "https://api.appannie.com/v1/accounts/109573/sales?start_date=$YESTERDAY&end_date=$YESTERDAY&&break_down=country&&break_down=country" >$APPANNIE_HOME/tmp/import-itunesconnect.xml
 curl --header "Accept: application/xml" --header "Authorization: Bearer 3a5cfea52747a72e66c27f82d7f2ab65a2ecc7e1"  "https://api.appannie.com/v1/accounts/109275/sales?start_date=$YESTERDAY&end_date=$YESTERDAY&&break_down=country&&break_down=country" >$APPANNIE_HOME/tmp/import-amazon.xml
