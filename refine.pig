@@ -1,12 +1,13 @@
-storeData = LOAD 'default.rawstoredata' USING org.apache.hcatalog.pig.HCatLoader();
+storeData = LOAD '/apps/hive/warehouse/rawstoredata/*.csv' USING PigStorage(',') 
+	AS (appstore:CHARARRAY, d:CHARARRAY, country:CHARARRAY, 
+    	UnitsDownloads:INT, UnitsUpdates:INT, UnitsRefunds:INT, UnitsPromotions:INT, 
+        RevenueDownloads:FLOAT, RevenueRefunds:FLOAT, RevenueUpdates:FLOAT, RevenuePromotions:FLOAT );
 
-refinedStoreData= FOREACH storeData GENERATE appstore, startdate, 
-	MilliSecondsBetween(ToDate(startdate), ToDate('1970-01-01', 'yyyy-mm-dd'))-978307200000L AS geostartdate, 
-    MilliSecondsBetween(ToDate(startdate), ToDate('1970-01-01', 'yyyy-mm-dd'))-978307200000L+86400000L AS geoenddate, 
-    country, unitsdownloads, unitsupdates, unitsrefunds, unitspromotions, 
-    revenuedownloads, revenueupdates, revenuerefunds, revenuepromotions;
+refinedStoreData= FOREACH storeData GENERATE appstore, d, 
+	MilliSecondsBetween(ToDate(d), ToDate('1970-01-01', 'yyyy-mm-dd'))-978307200000L, 
+    MilliSecondsBetween(ToDate(d), ToDate('1970-01-01', 'yyyy-mm-dd'))-978307200000L+86400000L, 
+    country,UnitsDownloads, UnitsUpdates, UnitsRefunds, UnitsPromotions, 
+    RevenueDownloads, RevenueUpdates, RevenueRefunds, RevenuePromotions;
 
-DUMP refinedStoreData;
-
-STORE refinedStoreData INTO 'default.refinedstoredata' USING org.apache.hcatalog.pig.HCatStorer();
+STORE refinedStoreData INTO '/apps/hive/warehouse/refinedstoredata';
 
